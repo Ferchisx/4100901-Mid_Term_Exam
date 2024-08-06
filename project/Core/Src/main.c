@@ -122,8 +122,10 @@ int main(void)
 	  if(left_pressed != 0){
 		  HAL_UART_Transmit(&huart2,"Left signal\r\n",13,10);
 		  for(uint8_t i = 0; i<6; i++){
-			  HAL_GPIO_TogglePin(LIZQ_GPIO_Port, LIZQ_Pin);
-			  HAL_Delay(500);
+			  if(right_pressed == 0){
+				  HAL_GPIO_TogglePin(LIZQ_GPIO_Port, LIZQ_Pin);
+				  HAL_Delay(500);
+			  }
 		  }
 		  HAL_GPIO_WritePin(LIZQ_GPIO_Port, LIZQ_Pin, 1);
 		  left_pressed = 0;
@@ -132,8 +134,10 @@ int main(void)
 	  if(right_pressed != 0){
 		  HAL_UART_Transmit(&huart2,"Right Signal\r\n",14,10);
 		  for(uint8_t i = 0; i<6; i++){
-			  HAL_GPIO_TogglePin(LDER_GPIO_Port, LDER_Pin);
-			  HAL_Delay(500);
+			  if(left_pressed == 0){
+				  HAL_GPIO_TogglePin(LDER_GPIO_Port, LDER_Pin);
+				  HAL_Delay(500);
+			  }
 		  }
 		  HAL_GPIO_WritePin(LDER_GPIO_Port, LDER_Pin, 1);
 		  right_pressed = 0;
