@@ -45,6 +45,9 @@ UART_HandleTypeDef huart2;
 /* USER CODE BEGIN PV */
 uint8_t left_pressed = 0;
 uint8_t right_pressed = 0;
+uint8_t left_continous = 0;
+uint8_t right_continous = 0;
+uint32_t static time = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -63,6 +66,16 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 	}
 	if(GPIO_Pin==DER_Pin){
 		right_pressed = 1;
+	}
+}
+
+void heartbeat(void){
+	static uint32_t tick=0;
+	if(HAL_GetTick()-tick>=500){
+//		tick = HAL_GetTick();
+		while(right_pressed != 0){
+			HAL_GPIO_TogglePin(LIZQ_GPIO_Port, LIZQ_Pin);
+		}
 	}
 }
 /* USER CODE END 0 */
@@ -105,22 +118,25 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  heartbeat();
 	  if(left_pressed != 0){
-		  left_pressed = 0;
+		  HAL_UART_Transmit(&huart2,"Left signal\r\n",13,10);
 		  for(uint8_t i = 0; i<6; i++){
 			  HAL_GPIO_TogglePin(LIZQ_GPIO_Port, LIZQ_Pin);
-			  HAL_Delay(250);
+			  HAL_Delay(500);
 		  }
 		  HAL_GPIO_WritePin(LIZQ_GPIO_Port, LIZQ_Pin, 1);
+		  left_pressed = 0;
 	  }
 
 	  if(right_pressed != 0){
-		  right_pressed = 0;
+		  HAL_UART_Transmit(&huart2,"Right Signal\r\n",14,10);
 		  for(uint8_t i = 0; i<6; i++){
 			  HAL_GPIO_TogglePin(LDER_GPIO_Port, LDER_Pin);
-			  HAL_Delay(250);
+			  HAL_Delay(500);
 		  }
 		  HAL_GPIO_WritePin(LDER_GPIO_Port, LDER_Pin, 1);
+		  right_pressed = 0;
 	  }
     /* USER CODE END WHILE */
 
