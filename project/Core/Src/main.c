@@ -43,7 +43,8 @@
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-
+uint8_t left_pressed = 0;
+uint8_t right_pressed = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -56,7 +57,14 @@ static void MX_USART2_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
+	if(GPIO_Pin==IZQ_Pin){
+		left_pressed = 1;
+	}
+	if(GPIO_Pin==DER_Pin){
+		right_pressed = 1;
+	}
+}
 /* USER CODE END 0 */
 
 /**
@@ -97,6 +105,23 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  if(left_pressed != 0){
+		  left_pressed = 0;
+		  for(uint8_t i = 0; i<6; i++){
+			  HAL_GPIO_TogglePin(LIZQ_GPIO_Port, LIZQ_Pin);
+			  HAL_Delay(250);
+		  }
+		  HAL_GPIO_WritePin(LIZQ_GPIO_Port, LIZQ_Pin, 1);
+	  }
+
+	  if(right_pressed != 0){
+		  right_pressed = 0;
+		  for(uint8_t i = 0; i<6; i++){
+			  HAL_GPIO_TogglePin(LDER_GPIO_Port, LDER_Pin);
+			  HAL_Delay(250);
+		  }
+		  HAL_GPIO_WritePin(LDER_GPIO_Port, LDER_Pin, 1);
+	  }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
